@@ -1,5 +1,8 @@
 package Game;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
@@ -23,7 +26,7 @@ public class Player {
 		this.y = y;
 		bounds = new Rectangle(x,y,32,8);
 		boost = 100;
-		trail = 100;
+		setTrail(100);
 	}
 
 	
@@ -35,10 +38,16 @@ public class Player {
 		bounds =  bounds.transform(Transform.createRotateTransform((float) angle,x,y));
 	}
 	
+	
+	
 	public void update()
 	{
 		x+=velX;
 		y+=velY;
+		if(getTrail() < 100)
+		{
+			setTrail(getTrail() + 1);
+		}
 	}
 	
 	public void render(Graphics g)
@@ -78,5 +87,13 @@ public class Player {
 
 	public void setVelY(float velY) {
 		this.velY = velY;
+	}
+
+	public float getTrail() {
+		return trail;
+	}
+
+	public void setTrail(float trail) {
+		this.trail = trail;
 	}
 }
