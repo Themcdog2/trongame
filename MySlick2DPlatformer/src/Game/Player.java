@@ -1,8 +1,6 @@
 package Game;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
@@ -11,7 +9,10 @@ import org.newdawn.slick.geom.Transform;
 public class Player {
 	private float x,y,velX,velY;
 	private Shape bounds;
-	private float boost,trail;
+	private float boost,trail, size,trailUpg,weapon;
+	private double ang = 0;
+	private Boolean fill = false;
+	private Color color;
 	
 	
 	
@@ -25,17 +26,30 @@ public class Player {
 		this.x = x;
 		this.y = y;
 		bounds = new Rectangle(x,y,32,8);
-		boost = 100;
-		setTrail(100);
+		setBoost(0);
+		
+		setTrail(100/(boost+1));
+	}
+	
+	public Player(int x,int y, double angle)
+	{
+		
+		ang = angle;
+		this.x = x;
+		this.y = y;
+		bounds = new Rectangle(x,y,32-size,8-size);
+		
+		setTrail(100/(boost+1));
 	}
 
 	
 	public void move(double angle)
 	{
-		setVelX(3*(float) Math.cos(angle));
-		setVelY(3*(float) Math.sin(angle));
-		bounds = new Rectangle(x,y,32,8);
-		bounds =  bounds.transform(Transform.createRotateTransform((float) angle,x,y));
+		ang = angle;
+		setVelX((3+boost)*(float) Math.cos(angle));
+		setVelY((3+boost)*(float) Math.sin(angle));
+		bounds = new Rectangle(x,y,32-size,8-size);
+		bounds =  bounds.transform(Transform.createRotateTransform((float) ang,x,y));
 	}
 	
 	
@@ -44,10 +58,19 @@ public class Player {
 	{
 		x+=velX;
 		y+=velY;
-		if(getTrail() < 100)
+		if(getTrail() == 0)
 		{
-			setTrail(getTrail() + 1);
+			fill = true;
 		}
+		if(getTrail() == 100)
+		{
+			fill = false;
+		}
+		if(fill)
+		{
+			setTrail(getTrail()+1+trailUpg);
+		}
+		bounds = new Rectangle(x,y,32-size,8-size);
 	}
 	
 	public void render(Graphics g)
@@ -96,4 +119,68 @@ public class Player {
 	public void setTrail(float trail) {
 		this.trail = trail;
 	}
+
+	public double getAng() {
+		return ang;
+	}
+
+	public void setAng(double ang) {
+		this.ang = ang;
+	}
+
+	public Boolean getFill() {
+		return fill;
+	}
+
+	public void setFill(Boolean fill) {
+		this.fill = fill;
+	}
+	public Shape getBounds() {
+		return bounds;
+	}
+	public void setBounds(Shape bounds) {
+		this.bounds = bounds;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public float getBoost() {
+		return boost;
+	}
+
+	public void setBoost(float boost) {
+		this.boost = boost;
+	}
+
+	public float getSize() {
+		return size;
+	}
+
+	public void setSize(float size) {
+		this.size = size;
+	}
+
+	public float getTrailUpg() {
+		return trailUpg;
+	}
+
+	public void setTrailUpg(float trailUpg) {
+		this.trailUpg = trailUpg;
+	}
+
+	public float getWeapon() {
+		return weapon;
+	}
+
+	public void setWeapon(float weapon) {
+		this.weapon = weapon;
+	}
+
+	
 }
