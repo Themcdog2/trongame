@@ -1,15 +1,20 @@
 package Game;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 public class Game extends BasicGame{
@@ -23,6 +28,18 @@ public class Game extends BasicGame{
 	private int redScore = 0;
 	private int blueScore = 0;
 	private Random r = new Random();
+	
+	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	static int width =  (int)screenSize.getWidth();
+	static int height = (int)screenSize.getHeight();
+	
+	
+	public Color lightColor = new Color(255,255,255,255);
+	private Image bufferedImageGame;
+	private static Image bufferedImageLighting;
+	Graphics gameGraphics;
+	Graphics lightGraphics;
+	ArrayList<Light> lightList = new ArrayList<Light>();
 	
 	
 	public Game(String title) {
@@ -38,6 +55,8 @@ public class Game extends BasicGame{
 		// TODO Auto-generated method stub
 		
 		//Setting up the Yung Map
+		
+
 		g.drawString(""+player1.getTrail(), 800, 0);
 		g.setColor(Color.red);
 		g.drawString("Red : "+redScore, 300, 8);
@@ -48,6 +67,9 @@ public class Game extends BasicGame{
 		g.setColor(Color.white);
 		g.drawRect(0, 0, 100, 32);
 		g.drawRect(150, 0, 100, 32);
+		
+		//Taking away grid for now
+		
 		for(int i = 0; i < 56; i++)
 		{
 			for(int j = 0; j < 32; j++)
@@ -58,6 +80,7 @@ public class Game extends BasicGame{
 				g.drawRect(i*32+64, j*32+32, 32, 32);
 			}
 		}
+		
 		
 		for(int i = 0; i < ups.size(); i++)
 		{
@@ -82,21 +105,54 @@ public class Game extends BasicGame{
 		}
 		
 		//rendering players
+		//renderToLightMap();
+		//renderLightmap(g);
 		g.setColor(Color.red);
 		player1.render(g);
+		
 		g.setColor(Color.blue);
 		player2.render(g);
 		
+		
 	}
 
+	public void renderToLightMap() throws SlickException
+    {
+		for(int i = 0; i < lightList.size(); i++){
+		lightGraphics.setDrawMode(Graphics.MODE_SCREEN);
+		lightGraphics.drawImage(lightList.get(i).lightImage, lightList.get(i).position.x, lightList.get(i).position.y, lightColor);
+		lightGraphics.setDrawMode(Graphics.MODE_NORMAL);
+		lightGraphics.flush();
+		}
+    }
+	
+	public static void renderLightmap(Graphics g)
+	{
+	    GL11.glEnable(GL11.GL_BLEND);
+	   // GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	   GL11. glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+	    g.drawImage(bufferedImageLighting, 0, 0);
+	    GL11.glDisable(GL11.GL_BLEND);
+	    g.setDrawMode(Graphics.MODE_NORMAL);
+	}
+	
 	@Override
 	public void init(GameContainer cont	) throws SlickException {
 		// TODO Auto-generated method stub
-		mapColor = new Color(150,235,228);
+		mapColor = new Color(150,235,228);// old color
+		//mapColor = new Color(0, 0, 0);
 		player1 = new Player(232,232);
 		player2 = new Player(232,cont.getHeight()-256);
 		angle1 = 0;
 		angle2 = 0;
+		
+		
+		
+		bufferedImageLighting = new Image(width,height);
+		bufferedImageGame = new Image(width, height);
+        lightGraphics = bufferedImageLighting.getGraphics();
+        lightList.add(new Light(player1.getX(),player1.getY()));
+		
 	}
 
 	@Override
@@ -181,6 +237,7 @@ public class Game extends BasicGame{
 		
 		player1.update();
 		player2.update();
+		lightList.get(0).position = new Vector2f(player1.getX(), player1.getY());
 		keys.update();
 		
 		
@@ -210,9 +267,7 @@ public class Game extends BasicGame{
 	public static void main(String args[]) throws SlickException
 	{
 		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		double width = screenSize.getWidth();
-		double height = screenSize.getHeight();
+		
 		
 		AppGameContainer app = new AppGameContainer(new Game("Yeet"));
 		 
