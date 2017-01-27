@@ -37,7 +37,7 @@ public class Game extends BasicGame{
 		// TODO Auto-generated method stub
 		
 		//Setting up the Yung Map
-		
+		g.drawString(""+player1.getTrail(), 800, 0);
 		g.setColor(Color.red);
 		g.drawString("Red : "+redScore, 300, 8);
 		g.fillRect(0, 0, player1.getTrail(), 32);
@@ -85,6 +85,7 @@ public class Game extends BasicGame{
 		player1.render(g);
 		g.setColor(Color.blue);
 		player2.render(g);
+		
 	}
 
 	@Override
@@ -92,7 +93,7 @@ public class Game extends BasicGame{
 		// TODO Auto-generated method stub
 		mapColor = new Color(150,235,228);
 		player1 = new Player(232,232);
-		player2 = new Player(232,cont.getHeight()-128);
+		player2 = new Player(232,cont.getHeight()-256);
 		angle1 = 0;
 		angle2 = 0;
 	}
@@ -122,12 +123,14 @@ public class Game extends BasicGame{
 			{
 				blueScore++;
 				trails.clear();
+				ups.clear();
 				init(arg0);
 			}
 			else if(trails.get(i).getBounds().intersects(player2.getBounds()) && trails.get(i).isActive())
 			{
 				redScore++;
 				trails.clear();
+				ups.clear();
 				init(arg0);
 			}
 			
@@ -142,9 +145,6 @@ public class Game extends BasicGame{
 				{
 				case "speed":
 						boostUp((SpeedUpg) ups.get(i),player1);
-					break;
-				case "size":
-					sizeUp((SizeUpg) ups.get(i),player1);
 					break;
 				case "trail":
 					trailUp((TrailUpg) ups.get(i),player1);
@@ -164,9 +164,6 @@ public class Game extends BasicGame{
 				{
 				case "speed":
 						boostUp((SpeedUpg) ups.get(i),player2);
-					break;
-				case "size":
-					sizeUp((SizeUpg) ups.get(i),player2);
 					break;
 				case "trail":
 					trailUp((TrailUpg) ups.get(i),player2);
@@ -275,7 +272,7 @@ public class Game extends BasicGame{
 				trails.add(new Trail(player.getX()+12,player.getY()+12,player.getAng()));
 				
 			}
-				player.setTrail(player.getTrail()-2+player.getTrailUpg());
+				player.setTrail((float) (player.getTrail()-1.5+player.getTrailUpg()));
 			
 		}
 	}
@@ -285,18 +282,15 @@ public class Game extends BasicGame{
 		if(r.nextInt(1000) == 1)
 		{
 			
-			switch(r.nextInt(4))
+			switch(r.nextInt(3))
 			{
 			case 0:
 				ups.add(new SpeedUpg(r.nextInt(1620)+100,r.nextInt(856)+100,1));
 				break;
 			case 1:
-				ups.add(new SizeUpg(r.nextInt(1620)+100,r.nextInt(856)+100,1));
+				ups.add(new TrailUpg(r.nextInt(1620)+100,r.nextInt(856)+100,.4f));
 				break;
 			case 2:
-				ups.add(new TrailUpg(r.nextInt(1620)+100,r.nextInt(856)+100,.2f));
-				break;
-			case 3:
 				ups.add(new WeaponUpg(r.nextInt(1620)+100,r.nextInt(856)+100,1));
 				break;
 				
@@ -311,10 +305,6 @@ public class Game extends BasicGame{
 		player.setBoost(player.getBoost()+upg.velChange);
 	}
 	
-	public void sizeUp(SizeUpg upg, Player player)
-	{
-		player.setSize(player.getSize()+upg.sizeChange);
-	}
 	
 	public void trailUp(TrailUpg upg, Player player)
 	{

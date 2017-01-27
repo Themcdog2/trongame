@@ -9,7 +9,7 @@ import org.newdawn.slick.geom.Transform;
 public class Player {
 	private float x,y,velX,velY;
 	private Shape bounds;
-	private float boost,trail, size,trailUpg,weapon;
+	private float boost,trail,trailUpg,weapon;
 	private double ang = 0;
 	private Boolean fill = false;
 	private Color color;
@@ -37,7 +37,7 @@ public class Player {
 		ang = angle;
 		this.x = x;
 		this.y = y;
-		bounds = new Rectangle(x,y,32-size,8-size);
+		bounds = new Rectangle(x,y,32,8);
 		
 		setTrail(100/(boost+1));
 	}
@@ -48,7 +48,7 @@ public class Player {
 		ang = angle;
 		setVelX((3+boost)*(float) Math.cos(angle));
 		setVelY((3+boost)*(float) Math.sin(angle));
-		bounds = new Rectangle(x,y,32-size,8-size);
+		bounds = new Rectangle(x,y,32,8);
 		bounds =  bounds.transform(Transform.createRotateTransform((float) ang,x,y));
 	}
 	
@@ -58,19 +58,20 @@ public class Player {
 	{
 		x+=velX;
 		y+=velY;
-		if(getTrail() == 0)
+		if(getTrail() <= 0)
 		{
 			fill = true;
 		}
-		if(getTrail() == 100)
+		if(getTrail() >= 100)
 		{
+			setTrail(100);
 			fill = false;
 		}
 		if(fill)
 		{
 			setTrail(getTrail()+1+trailUpg);
 		}
-		bounds = new Rectangle(x,y,32-size,8-size);
+		bounds = new Rectangle(x,y,32,8);
 	}
 	
 	public void render(Graphics g)
@@ -158,13 +159,7 @@ public class Player {
 		this.boost = boost;
 	}
 
-	public float getSize() {
-		return size;
-	}
 
-	public void setSize(float size) {
-		this.size = size;
-	}
 
 	public float getTrailUpg() {
 		return trailUpg;

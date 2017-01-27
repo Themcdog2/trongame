@@ -23,7 +23,7 @@ public class KeyHandler {
 		right2 = Keyboard.isKeyDown(Keyboard.KEY_RIGHT);
 		up2 = Keyboard.isKeyDown(Keyboard.KEY_UP);
 		down2 = Keyboard.isKeyDown(Keyboard.KEY_DOWN);
-		trail2 = Keyboard.isKeyDown(Keyboard.KEY_NUMPAD5);
+		trail2 = Keyboard.isKeyDown(Keyboard.KEY_SLASH);
 		
 		
 	}
