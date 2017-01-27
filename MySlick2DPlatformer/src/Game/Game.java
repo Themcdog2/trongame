@@ -24,6 +24,7 @@ public class Game extends BasicGame{
 	private int blueScore = 0;
 	private Random r = new Random();
 	
+	
 	public Game(String title) {
 		super(title);
 		
