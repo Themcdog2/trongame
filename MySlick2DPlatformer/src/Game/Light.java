@@ -14,6 +14,7 @@ public class Light {
 		position.y = y;
 		try {
 			lightImage = new Image("Data/light.png");
+			lightImage = lightImage.getScaledCopy(32, 32);
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}

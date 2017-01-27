@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,6 +17,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.BufferedImageUtil;
 
 public class Game extends BasicGame{
 	
@@ -35,10 +38,11 @@ public class Game extends BasicGame{
 	
 	
 	public Color lightColor = new Color(255,255,255,255);
-	private Image bufferedImageGame;
-	private static Image bufferedImageLighting;
+	private static Image lightImage;
+	private static BufferedImage bufferedImageLighting;
+	static Texture lightTex;
 	Graphics gameGraphics;
-	Graphics lightGraphics;
+	java.awt.Graphics lightGraphics;
 	ArrayList<Light> lightList = new ArrayList<Light>();
 	
 	
@@ -105,8 +109,10 @@ public class Game extends BasicGame{
 		}
 		
 		//rendering players
-		//renderToLightMap();
-		//renderLightmap(g);
+
+		g.setDrawMode(Graphics.MODE_ADD);
+		g.drawImage(lightList.get(0).lightImage, 0, 0);
+		g.setDrawMode(Graphics.MODE_NORMAL);
 		g.setColor(Color.red);
 		player1.render(g);
 		
@@ -116,25 +122,7 @@ public class Game extends BasicGame{
 		
 	}
 
-	public void renderToLightMap() throws SlickException
-    {
-		for(int i = 0; i < lightList.size(); i++){
-		lightGraphics.setDrawMode(Graphics.MODE_SCREEN);
-		lightGraphics.drawImage(lightList.get(i).lightImage, lightList.get(i).position.x, lightList.get(i).position.y, lightColor);
-		lightGraphics.setDrawMode(Graphics.MODE_NORMAL);
-		lightGraphics.flush();
-		}
-    }
 	
-	public static void renderLightmap(Graphics g)
-	{
-	    GL11.glEnable(GL11.GL_BLEND);
-	   // GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	   GL11. glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-	    g.drawImage(bufferedImageLighting, 0, 0);
-	    GL11.glDisable(GL11.GL_BLEND);
-	    g.setDrawMode(Graphics.MODE_NORMAL);
-	}
 	
 	@Override
 	public void init(GameContainer cont	) throws SlickException {
@@ -148,9 +136,17 @@ public class Game extends BasicGame{
 		
 		
 		
-		bufferedImageLighting = new Image(width,height);
-		bufferedImageGame = new Image(width, height);
-        lightGraphics = bufferedImageLighting.getGraphics();
+		
+		bufferedImageLighting = new BufferedImage(width,height, BufferedImage.TYPE_INT_ARGB);
+		lightGraphics = bufferedImageLighting.getGraphics();
+		
+		try {
+			lightTex = BufferedImageUtil.getTexture("dummy", bufferedImageLighting);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		lightImage = new Image(lightTex);
+        
         lightList.add(new Light(player1.getX(),player1.getY()));
 		
 	}
