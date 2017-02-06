@@ -2,6 +2,7 @@ package Game;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
@@ -9,10 +10,13 @@ import org.newdawn.slick.geom.Transform;
 public class Player {
 	private float x,y,velX,velY;
 	private Shape bounds;
-	private float boost,trail,trailUpg,weapon;
+	private float boost,trail,trailUpg,weapon,brake;
 	private double ang = 0;
 	private Boolean fill = false;
 	private Color color;
+	private float brakeTotal = 300;
+	private boolean brakeFill = false;
+	private Image bike;
 	
 	
 	
@@ -34,7 +38,6 @@ public class Player {
 	public Player(int x,int y, double angle)
 	{
 		
-		ang = angle;
 		this.x = x;
 		this.y = y;
 		bounds = new Rectangle(x,y,32,8);
@@ -45,9 +48,10 @@ public class Player {
 	
 	public void move(double angle)
 	{
+		
 		ang = angle;
-		setVelX((3+boost)*(float) Math.cos(angle));
-		setVelY((3+boost)*(float) Math.sin(angle));
+		setVelX((3+boost-brake)*(float) Math.cos(angle));
+		setVelY((3+boost-brake)*(float) Math.sin(angle));
 		bounds = new Rectangle(x,y,32,8);
 		bounds =  bounds.transform(Transform.createRotateTransform((float) ang,x,y));
 	}
@@ -56,6 +60,7 @@ public class Player {
 	
 	public void update()
 	{
+		
 		x+=velX;
 		y+=velY;
 		if(getTrail() <= 0)
@@ -72,11 +77,32 @@ public class Player {
 			setTrail(getTrail()+1+trailUpg);
 		}
 		bounds = new Rectangle(x,y,32,8);
+		
+		if(getBrakeTotal()<=0)
+		{
+			brakeFill = true;
+		}
+		if(getBrakeTotal()>=300)
+		{
+			brakeFill = false;
+		}
+		if(brakeFill)
+		{
+			brakeTotal+= 0.3f;
+		}
 	}
 	
-	public void render(Graphics g)
+	public void render(Graphics g,Image i)
 	{
+		bike = i;
 		
+	
+		
+		//bike.setRotation((float) ang);
+		//bike.draw(x, y+8, x+32, y, bounds.getX(), bounds.getY(), bounds.getMinX(), bounds.getMinY());
+		
+		
+	
 		g.fill(bounds);
 		
 	}
@@ -175,6 +201,30 @@ public class Player {
 
 	public void setWeapon(float weapon) {
 		this.weapon = weapon;
+	}
+
+	public float getBrake() {
+		return brake;
+	}
+
+	public void setBrake(float brake) {
+		this.brake = brake;
+	}
+
+	public float getBrakeTotal() {
+		return brakeTotal;
+	}
+
+	public void setBrakeTotal(float brakeTotal) {
+		this.brakeTotal = brakeTotal;
+	}
+
+	public boolean isBrakeFill() {
+		return brakeFill;
+	}
+
+	public void setBrakeFill(boolean brakeFill) {
+		this.brakeFill = brakeFill;
 	}
 
 	
